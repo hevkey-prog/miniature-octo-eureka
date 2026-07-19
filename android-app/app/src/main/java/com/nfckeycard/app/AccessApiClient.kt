@@ -11,9 +11,10 @@ import java.nio.charset.StandardCharsets
 data class AccessResult(val granted: Boolean, val message: String?)
 
 /**
- * Calls the existing access-control API with the scanned card id.
- * Expects a JSON response of the form {"granted": true|false, "message": "..."}.
- * Adjust [buildRequestBody] / response parsing here if your API's contract differs.
+ * Calls the existing access-control API: either to verify a scanned card's UID, or to trigger
+ * opening the door directly. Both expect a JSON response of the form
+ * {"granted": true|false, "message": "..."}. Adjust [buildVerifyBody] / [parseResponse] here if
+ * your API's contract differs.
  */
 object AccessApiClient {
 
@@ -26,13 +27,30 @@ object AccessApiClient {
         cardId: String,
         onResult: (Result<AccessResult>) -> Unit
     ) {
+        request(endpoint, apiKey, buildVerifyBody(cardId), onResult)
+    }
+
+    fun openDoor(
+        endpoint: String,
+        apiKey: String?,
+        onResult: (Result<AccessResult>) -> Unit
+    ) {
+        request(endpoint, apiKey, buildOpenDoorBody(), onResult)
+    }
+
+    private fun request(
+        endpoint: String,
+        apiKey: String?,
+        body: String,
+        onResult: (Result<AccessResult>) -> Unit
+    ) {
         Thread {
-            val result = runCatching { doRequest(endpoint, apiKey, cardId) }
+            val result = runCatching { doRequest(endpoint, apiKey, body) }
             mainHandler.post { onResult(result) }
         }.start()
     }
 
-    private fun doRequest(endpoint: String, apiKey: String?, cardId: String): AccessResult {
+    private fun doRequest(endpoint: String, apiKey: String?, body: String): AccessResult {
         val url = URL(endpoint)
         val connection = url.openConnection() as HttpURLConnection
         try {
@@ -46,7 +64,6 @@ object AccessApiClient {
                 connection.setRequestProperty("Authorization", "Bearer $apiKey")
             }
 
-            val body = buildRequestBody(cardId)
             OutputStreamWriter(connection.outputStream, StandardCharsets.UTF_8).use { writer ->
                 writer.write(body)
             }
@@ -65,8 +82,11 @@ object AccessApiClient {
         }
     }
 
-    private fun buildRequestBody(cardId: String): String =
+    private fun buildVerifyBody(cardId: String): String =
         JSONObject().put("cardId", cardId).toString()
+
+    private fun buildOpenDoorBody(): String =
+        JSONObject().toString()
 
     private fun parseResponse(responseText: String): AccessResult {
         val json = JSONObject(responseText)

@@ -40,6 +40,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:text="@string/settings_open_door_endpoint_label"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/openDoorEndpointInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:autofillHints="url"
+            android:hint="@string/settings_open_door_endpoint_hint"
+            android:inputType="textUri"
+            android:maxLines="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="@string/settings_api_key_label"
             android:textStyle="bold" />
 

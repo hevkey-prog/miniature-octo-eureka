@@ -17,12 +17,14 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsToolbar.setNavigationOnClickListener { finish() }
 
         binding.endpointInput.setText(Prefs.getEndpoint(this).orEmpty())
+        binding.openDoorEndpointInput.setText(Prefs.getOpenDoorEndpoint(this).orEmpty())
         binding.apiKeyInput.setText(Prefs.getApiKey(this).orEmpty())
 
         binding.saveButton.setOnClickListener {
             val endpoint = binding.endpointInput.text.toString().trim()
+            val openDoorEndpoint = binding.openDoorEndpointInput.text.toString().trim()
             val apiKey = binding.apiKeyInput.text.toString().trim()
-            Prefs.save(this, endpoint, apiKey)
+            Prefs.save(this, endpoint, openDoorEndpoint, apiKey)
             Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show()
             finish()
         }

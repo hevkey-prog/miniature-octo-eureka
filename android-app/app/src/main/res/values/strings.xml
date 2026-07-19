@@ -12,8 +12,16 @@
     <string name="status_no_endpoint">ยังไม่ได้ตั้งค่า URL ของ API — แตะไอคอนตั้งค่าเพื่อกรอก</string>
     <string name="card_id_label">รหัสบัตร: %1$s</string>
 
-    <string name="settings_endpoint_label">API Endpoint สำหรับตรวจสอบสิทธิ์</string>
+    <string name="open_door_button">เปิดประตู</string>
+    <string name="status_opening_door">กำลังเปิดประตู…</string>
+    <string name="status_door_opened">เปิดประตูแล้ว</string>
+    <string name="status_door_failed">เปิดประตูไม่สำเร็จ</string>
+    <string name="status_no_open_door_endpoint">ยังไม่ได้ตั้งค่า URL สำหรับเปิดประตู — แตะไอคอนตั้งค่าเพื่อกรอก</string>
+
+    <string name="settings_endpoint_label">API Endpoint สำหรับตรวจสอบสิทธิ์ (สแกนบัตร)</string>
     <string name="settings_endpoint_hint">https://your-api.example.com/api/access/verify</string>
+    <string name="settings_open_door_endpoint_label">API Endpoint สำหรับเปิดประตู (กดปุ่ม)</string>
+    <string name="settings_open_door_endpoint_hint">https://your-api.example.com/api/door/open</string>
     <string name="settings_api_key_label">API Key (ถ้ามี)</string>
     <string name="settings_save">บันทึก</string>
     <string name="settings_saved">บันทึกการตั้งค่าแล้ว</string>

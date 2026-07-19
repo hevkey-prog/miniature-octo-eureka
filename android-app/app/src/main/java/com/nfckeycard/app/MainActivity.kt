@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var nfcAdapter: NfcAdapter? = null
     private var pendingIntent: PendingIntent? = null
-    private var isChecking = false
+    private var isBusy = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
             0
         }
         pendingIntent = PendingIntent.getActivity(this, 0, intent, flags)
+
+        binding.openDoorButton.setOnClickListener { onOpenDoorClicked() }
 
         showIdleState()
         handleIntent(getIntent())
@@ -107,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onCardScanned(tag: Tag) {
-        if (isChecking) return
+        if (isBusy) return
 
         val cardId = tag.id.joinToString(separator = "") { byte -> "%02X".format(byte) }
         binding.cardIdText.visibility = android.view.View.VISIBLE
@@ -120,11 +122,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         val apiKey = Prefs.getApiKey(this)
-        isChecking = true
+        isBusy = true
         showScanningState()
 
         AccessApiClient.verifyAccess(endpoint, apiKey, cardId) { result ->
-            isChecking = false
+            isBusy = false
             binding.progressBar.visibility = android.view.View.GONE
             result.fold(
                 onSuccess = { access ->
@@ -137,6 +139,52 @@ class MainActivity : AppCompatActivity() {
                     } else {
                         showState(
                             access.message?.takeIf { it.isNotBlank() } ?: getString(R.string.status_denied),
+                            R.color.status_denied_bg,
+                            R.color.status_on_color_text
+                        )
+                    }
+                },
+                onFailure = { error ->
+                    showState(
+                        getString(R.string.status_error, error.message ?: error.toString()),
+                        R.color.status_error_bg,
+                        R.color.status_on_color_text
+                    )
+                }
+            )
+        }
+    }
+
+    private fun onOpenDoorClicked() {
+        if (isBusy) return
+
+        val endpoint = Prefs.getOpenDoorEndpoint(this)
+        if (endpoint.isNullOrBlank()) {
+            binding.cardIdText.visibility = android.view.View.GONE
+            showState(getString(R.string.status_no_open_door_endpoint), R.color.status_error_bg, R.color.status_on_color_text)
+            return
+        }
+
+        val apiKey = Prefs.getApiKey(this)
+        isBusy = true
+        binding.cardIdText.visibility = android.view.View.GONE
+        binding.progressBar.visibility = android.view.View.VISIBLE
+        showState(getString(R.string.status_opening_door), R.color.status_idle_bg, R.color.status_idle_text)
+
+        AccessApiClient.openDoor(endpoint, apiKey) { result ->
+            isBusy = false
+            binding.progressBar.visibility = android.view.View.GONE
+            result.fold(
+                onSuccess = { access ->
+                    if (access.granted) {
+                        showState(
+                            access.message?.takeIf { it.isNotBlank() } ?: getString(R.string.status_door_opened),
+                            R.color.status_granted_bg,
+                            R.color.status_on_color_text
+                        )
+                    } else {
+                        showState(
+                            access.message?.takeIf { it.isNotBlank() } ?: getString(R.string.status_door_failed),
                             R.color.status_denied_bg,
                             R.color.status_on_color_text
                         )
