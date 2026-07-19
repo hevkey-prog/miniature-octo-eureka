@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">NFC Keycard</string>
+    <string name="settings_title">ตั้งค่า</string>
+
+    <string name="status_idle">แตะบัตร NFC ที่ด้านหลังโทรศัพท์เพื่อสแกน</string>
+    <string name="status_scanning">กำลังตรวจสอบสิทธิ์…</string>
+    <string name="status_granted">อนุญาตให้เข้าถึง</string>
+    <string name="status_denied">ไม่ได้รับอนุญาต</string>
+    <string name="status_error">เกิดข้อผิดพลาด: %1$s</string>
+    <string name="status_no_nfc">อุปกรณ์นี้ไม่รองรับ NFC</string>
+    <string name="status_nfc_disabled">กรุณาเปิดใช้งาน NFC ในการตั้งค่าเครื่อง</string>
+    <string name="status_no_endpoint">ยังไม่ได้ตั้งค่า URL ของ API — แตะไอคอนตั้งค่าเพื่อกรอก</string>
+    <string name="card_id_label">รหัสบัตร: %1$s</string>
+
+    <string name="settings_endpoint_label">API Endpoint สำหรับตรวจสอบสิทธิ์</string>
+    <string name="settings_endpoint_hint">https://your-api.example.com/api/access/verify</string>
+    <string name="settings_api_key_label">API Key (ถ้ามี)</string>
+    <string name="settings_save">บันทึก</string>
+    <string name="settings_saved">บันทึกการตั้งค่าแล้ว</string>
+
+    <string name="action_settings">ตั้งค่า</string>
+    <string name="nfc_enable_settings">เปิดการตั้งค่า NFC</string>
+</resources>

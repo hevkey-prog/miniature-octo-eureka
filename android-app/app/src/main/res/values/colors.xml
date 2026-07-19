@@ -1,0 +1,13 @@
+<resources>
+    <color name="purple_700">#3700B3</color>
+    <color name="purple_500">#6200EE</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="status_idle_bg">#ECECEC</color>
+    <color name="status_idle_text">#333333</color>
+    <color name="status_granted_bg">#1B8A3D</color>
+    <color name="status_denied_bg">#C62828</color>
+    <color name="status_error_bg">#E0A800</color>
+    <color name="status_on_color_text">#FFFFFF</color>
+</resources>
