@@ -1,0 +1,7 @@
+out/
+assets/bg/*.mp4
+song.mp3
+bg_cmd.json
+draft_timing.txt
+draft_timing.json
+lyrics_lines.json
