@@ -6,3 +6,5 @@ draft_timing.txt
 draft_timing.json
 lyrics_lines.json
 timing_for_correction.txt
+*.bak
+timing_v3.json
