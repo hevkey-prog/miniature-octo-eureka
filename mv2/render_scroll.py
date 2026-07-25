@@ -240,8 +240,10 @@ def build_column(assets):
         top += a.h + LINE_GAP
     return pos_center
 
-LEAD_TIME = 0.9  # show each line this many seconds before it's actually sung,
+LEAD_TIME = 1.3  # show each line this many seconds before it's actually sung,
                   # so there's time to read it before the vocal catches up
+                  # (bumped from 0.9 — user reported the scroll felt too fast
+                  # to keep up with while reading)
 
 def build_offset_fn(pos_center):
     bt = [max(0.0, row["start"] - LEAD_TIME) for row in timing]
