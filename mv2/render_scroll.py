@@ -336,11 +336,14 @@ def main():
     n_out_frames = int((end_t - start_t) * FPS)
     print(f"bg_fps={bg_fps} total_frames={total_frames} range={start_t}-{end_t} out_frames={n_out_frames}", flush=True)
 
-    out_name = "out/mv_silent.mp4" if not TEST_RANGE else "out/mv_test_silent.mp4"
+    if len(sys.argv) > 2:
+        out_name = sys.argv[2]
+    else:
+        out_name = "out/mv_silent.mp4" if not TEST_RANGE else "out/mv_test_silent.mp4"
     proc = subprocess.Popen(
         ["ffmpeg", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}",
          "-r", str(FPS), "-i", "-",
-         "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
+         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p",
          out_name],
         stdin=subprocess.PIPE
     )
