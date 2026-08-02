@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เข้าสู่ระบบ - เว็บอัพรูปส่วนตัว</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <div class="login-box">
+    <h1>เว็บอัพรูปส่วนตัว</h1>
+    <form method="POST" action="/login">
+      <input type="password" name="password" placeholder="รหัสผ่าน" required autofocus />
+      <br /><br />
+      <input type="submit" value="เข้าสู่ระบบ" />
+    </form>
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
+  </div>
+</body>
+</html>

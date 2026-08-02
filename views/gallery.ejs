@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>เว็บอัพรูปส่วนตัว</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <header>
+    <h1>รูปภาพของฉัน</h1>
+    <form method="POST" action="/logout">
+      <button type="submit">ออกจากระบบ</button>
+    </form>
+  </header>
+  <main>
+    <form class="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
+      <input type="file" name="photo" accept="image/*" required />
+      <input type="submit" value="อัพโหลด" />
+    </form>
+
+    <% if (files.length === 0) { %>
+      <p class="empty">ยังไม่มีรูปภาพ ลองอัพโหลดรูปแรกของคุณ</p>
+    <% } else { %>
+      <div class="gallery">
+        <% files.forEach(function(file) { %>
+          <figure>
+            <img src="/uploads/<%= file %>" alt="photo" loading="lazy" />
+            <form method="POST" action="/delete/<%= file %>" onsubmit="return confirm('ลบรูปนี้?');">
+              <button type="submit" class="delete-btn">ลบ</button>
+            </form>
+          </figure>
+        <% }); %>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>
