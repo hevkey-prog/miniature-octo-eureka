@@ -1,0 +1,114 @@
+<title>เปิดประตู</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif;
+    background: #111827;
+    color: #f9fafb;
+    padding: 24px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+  h1 { font-size: 20px; font-weight: 500; opacity: 0.8; margin: 0; }
+  #unlockBtn {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: none;
+    background: #2563eb;
+    color: white;
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+    transition: transform 0.1s, background 0.2s;
+  }
+  #unlockBtn:active { transform: scale(0.95); }
+  #unlockBtn.success { background: #16a34a; }
+  #unlockBtn.error { background: #dc2626; }
+  #unlockBtn:disabled { opacity: 0.6; cursor: default; }
+  #status { min-height: 24px; font-size: 15px; opacity: 0.85; }
+  #setup { max-width: 320px; font-size: 14px; opacity: 0.7; line-height: 1.6; }
+</style>
+
+<h1 id="who">ระบบเปิดประตู</h1>
+<button id="unlockBtn">แตะเพื่อเปิดประตู</button>
+<div id="status"></div>
+<div id="setup" hidden>
+  ยังไม่มี token — เปิดลิงก์ที่ผู้ดูแลส่งให้ (มีรูปแบบ <code>?t=...</code>) เพียงครั้งเดียว
+  ระบบจะจำไว้ในเครื่องนี้ให้อัตโนมัติ
+</div>
+
+<script>
+  const btn = document.getElementById('unlockBtn');
+  const status = document.getElementById('status');
+  const setupNote = document.getElementById('setup');
+  const who = document.getElementById('who');
+
+  const urlToken = new URLSearchParams(location.search).get('t');
+  if (urlToken) {
+    localStorage.setItem('doorToken', urlToken);
+    history.replaceState(null, '', location.pathname);
+  }
+  const token = localStorage.getItem('doorToken');
+
+  async function init() {
+    if (!token) {
+      btn.disabled = true;
+      setupNote.hidden = false;
+      status.textContent = 'ไม่พบสิทธิ์เปิดประตูบนเครื่องนี้';
+      return;
+    }
+    const res = await fetch(`/api/verify?t=${encodeURIComponent(token)}`);
+    const data = await res.json();
+    if (!data.ok) {
+      btn.disabled = true;
+      setupNote.hidden = false;
+      status.textContent = 'token นี้ใช้ไม่ได้แล้ว ติดต่อผู้ดูแล';
+      return;
+    }
+    who.textContent = `สวัสดี ${data.label}`;
+  }
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.classList.remove('success', 'error');
+    status.textContent = 'กำลังเปิดประตู...';
+    try {
+      const res = await fetch('/api/unlock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        btn.classList.add('success');
+        status.textContent = data.simulated
+          ? 'เปิดแล้ว (โหมดจำลอง ยังไม่ต่อฮาร์ดแวร์จริง)'
+          : 'เปิดประตูแล้ว';
+      } else {
+        btn.classList.add('error');
+        status.textContent = 'เปิดไม่สำเร็จ: ไม่มีสิทธิ์';
+      }
+    } catch (err) {
+      btn.classList.add('error');
+      status.textContent = 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้';
+    } finally {
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.classList.remove('success', 'error');
+        status.textContent = '';
+      }, 2500);
+    }
+  });
+
+  init();
+</script>
