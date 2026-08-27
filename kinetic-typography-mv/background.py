@@ -72,7 +72,7 @@ def render_background(t, width, height, base_hue=0.62, energy=0.5):
     img = img.filter(ImageFilter.GaussianBlur(0.6))
 
     # film grain
-    grain = (np.random.default_rng(int(t * 1000) % 99991).normal(0, 6, (height, width, 1))).astype(np.int16)
+    grain = (np.random.default_rng(int(t * 1000) % 99991).normal(0, 2.2, (height, width, 1))).astype(np.int16)
     arr = np.asarray(img).astype(np.int16) + grain
     arr = np.clip(arr, 0, 255).astype(np.uint8)
     return Image.fromarray(arr, "RGB")

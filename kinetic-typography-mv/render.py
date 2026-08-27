@@ -31,7 +31,8 @@ def render_frames_to_ffmpeg():
         "-f", "rawvideo", "-vcodec", "rawvideo",
         "-s", f"{WIDTH}x{HEIGHT}", "-pix_fmt", "rgb24", "-r", str(FPS),
         "-i", "-",
-        "-an", "-vcodec", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
+        "-an", "-vcodec", "libx264", "-pix_fmt", "yuv420p",
+        "-preset", "slow", "-crf", "23", "-tune", "film",
         SILENT_MP4,
     ]
     proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
