@@ -1,0 +1,4 @@
+output/*
+!output/.gitkeep
+!output/kinetic_mv.mp4
+__pycache__/
