@@ -1,0 +1,47 @@
+import { Chat, User } from "../types";
+
+export const BOT_CONTACTS: (User & { chatId: string })[] = [
+  {
+    id: "bot-1",
+    chatId: "chat-1",
+    name: "แนน",
+    avatarColor: "#FF6B6B",
+    bio: "ชอบดูหนังกับกาแฟ ☕️",
+  },
+  {
+    id: "bot-2",
+    chatId: "chat-2",
+    name: "ต้น",
+    avatarColor: "#4D96FF",
+    bio: "สายเที่ยว สายกิน 🍜",
+  },
+  {
+    id: "bot-3",
+    chatId: "chat-3",
+    name: "มายด์",
+    avatarColor: "#6BCB77",
+    bio: "นักพัฒนาแอป 👩‍💻",
+  },
+];
+
+export function initialChats(): Chat[] {
+  return BOT_CONTACTS.map((c) => ({
+    id: c.chatId,
+    contactId: c.id,
+    name: c.name,
+    avatarColor: c.avatarColor,
+  }));
+}
+
+const AUTO_REPLIES = [
+  "จริงเหรอ! เล่าต่อสิ 😄",
+  "อืมม เข้าใจเลย",
+  "555 ตลกมาก",
+  "วันนี้เป็นไงบ้าง?",
+  "โอเคๆ เดี๋ยวคุยต่อนะ",
+  "น่าสนใจมาก!",
+];
+
+export function randomAutoReply(): string {
+  return AUTO_REPLIES[Math.floor(Math.random() * AUTO_REPLIES.length)];
+}
