@@ -1,6 +1,16 @@
 import { Chat, User } from "../types";
 
-export const BOT_CONTACTS: (User & { chatId: string })[] = [
+export const AI_CONTACT_ID = "ai-1";
+
+export const BOT_CONTACTS: (User & { chatId: string; isAI?: boolean })[] = [
+  {
+    id: AI_CONTACT_ID,
+    chatId: "chat-ai-1",
+    name: "AI ผู้ช่วย",
+    avatarColor: "#A66CFF",
+    bio: "คุยได้ทุกเรื่อง ขับเคลื่อนด้วย Claude",
+    isAI: true,
+  },
   {
     id: "bot-1",
     chatId: "chat-1",
@@ -30,6 +40,7 @@ export function initialChats(): Chat[] {
     contactId: c.id,
     name: c.name,
     avatarColor: c.avatarColor,
+    isAI: c.isAI,
   }));
 }
 

@@ -6,14 +6,29 @@
 
 - ตั้งค่าโปรไฟล์ (ชื่อ, สีอวาตาร์, ประวัติย่อ) ตอนเปิดแอปครั้งแรก
 - หน้ารายการแชท พร้อมข้อความล่าสุดของแต่ละคน
-- ห้องแชทแบบฟองข้อความ ส่ง/รับข้อความ พร้อมบอทตอบกลับอัตโนมัติสำหรับทดสอบ
+- ห้องแชทแบบฟองข้อความ ส่ง/รับข้อความ
+- **คุยกับ AI จริง** (ขับเคลื่อนด้วย Claude ผ่าน backend ของเราเอง — ผู้ใช้ไม่ต้องมี API key) พร้อมเพื่อนแชทจำลองอีก 3 คนสำหรับทดสอบ UI
 - หน้าโปรไฟล์ แก้ไขประวัติย่อได้
 - ข้อมูลถูกเก็บไว้ในเครื่องด้วย AsyncStorage (ใช้งานได้ทันทีแบบออฟไลน์)
 
 ## เริ่มใช้งาน
 
+### 1. รัน backend (จำเป็นสำหรับแชทกับ AI)
+
+```bash
+cd server
+npm install
+cp .env.example .env   # ใส่ ANTHROPIC_API_KEY ของคุณ
+npm start
+```
+
+ดูรายละเอียดเพิ่มเติมที่ [server/README.md](server/README.md)
+
+### 2. รันแอปมือถือ
+
 ```bash
 npm install
+cp .env.example .env   # ตั้งค่า EXPO_PUBLIC_API_URL ให้ชี้ไปที่ backend
 npm start
 ```
 
@@ -40,12 +55,15 @@ eas build --platform ios
 App.tsx                  จุดเริ่มต้น + การตั้งค่า navigation
 src/screens/              หน้าจอต่างๆ (Onboarding, ChatList, ChatRoom, Profile)
 src/storage/db.ts         เก็บ/อ่านข้อมูลด้วย AsyncStorage
-src/data/contacts.ts      รายชื่อผู้ติดต่อตัวอย่าง + ข้อความตอบกลับอัตโนมัติ
+src/data/contacts.ts      รายชื่อผู้ติดต่อ (รวม AI) + ข้อความตอบกลับอัตโนมัติสำหรับบอททดสอบ
+src/api/aiChat.ts          เรียก backend เพื่อคุยกับ AI จริง
 src/types/                type ของ User, Chat, Message
+server/                    backend เก็บ API key + ส่งต่อข้อความไปยัง Claude
 ```
 
 ## ขั้นตอนถัดไป (แนะนำ)
 
-- เชื่อมต่อ backend จริง (เช่น Firebase / Supabase) เพื่อแชทกับผู้ใช้จริงแบบเรียลไทม์
+- เชื่อมต่อ backend สำหรับแชทกับคนจริงแบบเรียลไทม์ (เช่น Firebase / Supabase)
 - เพิ่มระบบ authentication (เข้าสู่ระบบด้วยเบอร์โทร/อีเมล)
 - เพิ่มการแจ้งเตือน (push notifications)
+- Deploy backend ขึ้นจริง (ดู server/README.md) แล้วตั้ง `EXPO_PUBLIC_API_URL` ให้ชี้ไปที่ URL นั้นตอน build แอปจริง

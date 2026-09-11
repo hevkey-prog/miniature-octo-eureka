@@ -18,4 +18,5 @@ export type Chat = {
   contactId: string;
   name: string;
   avatarColor: string;
+  isAI?: boolean;
 };

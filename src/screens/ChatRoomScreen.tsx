@@ -10,14 +10,16 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { fetchAIReply } from "../api/aiChat";
 import { randomAutoReply } from "../data/contacts";
 import { addMessage, getMessages } from "../storage/db";
 import { Message } from "../types";
 
 export default function ChatRoomScreen({ route, navigation }: any) {
-  const { chatId, name, avatarColor, contactId } = route.params;
+  const { chatId, name, avatarColor, contactId, isAI } = route.params;
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
+  const [aiThinking, setAiThinking] = useState(false);
   const listRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -37,9 +39,45 @@ export default function ChatRoomScreen({ route, navigation }: any) {
       text,
       createdAt: Date.now(),
     };
+    const history = [...messages, mine];
     await addMessage(mine);
-    setMessages((prev) => [...prev, mine]);
+    setMessages(history);
     setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+
+    if (isAI) {
+      setAiThinking(true);
+      try {
+        const replyText = await fetchAIReply(
+          history.map((m) => ({
+            role: m.senderId === "me" ? "user" : "assistant",
+            content: m.text,
+          }))
+        );
+        const reply: Message = {
+          id: `${Date.now()}-${contactId}`,
+          chatId,
+          senderId: contactId,
+          text: replyText || "ขอโทษค่ะ ตอนนี้ตอบไม่ได้",
+          createdAt: Date.now(),
+        };
+        await addMessage(reply);
+        setMessages((prev) => [...prev, reply]);
+      } catch (err) {
+        const reply: Message = {
+          id: `${Date.now()}-${contactId}`,
+          chatId,
+          senderId: contactId,
+          text: "เชื่อมต่อ AI ไม่สำเร็จ ลองใหม่อีกครั้งนะ",
+          createdAt: Date.now(),
+        };
+        await addMessage(reply);
+        setMessages((prev) => [...prev, reply]);
+      } finally {
+        setAiThinking(false);
+        setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 50);
+      }
+      return;
+    }
 
     setTimeout(async () => {
       const reply: Message = {
@@ -87,6 +125,10 @@ export default function ChatRoomScreen({ route, navigation }: any) {
           }}
         />
 
+        {aiThinking && (
+          <Text style={styles.typingIndicator}>AI กำลังพิมพ์...</Text>
+        )}
+
         <View style={styles.inputRow}>
           <TextInput
             style={styles.input}
@@ -113,6 +155,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   flex: { flex: 1 },
   listContent: { padding: 16, gap: 8 },
+  typingIndicator: { paddingHorizontal: 20, paddingBottom: 6, fontSize: 13, color: "#999" },
   bubble: { maxWidth: "78%", borderRadius: 18, paddingHorizontal: 14, paddingVertical: 10, marginBottom: 4 },
   bubbleMine: { alignSelf: "flex-end", borderBottomRightRadius: 4 },
   bubbleTheirs: { alignSelf: "flex-start", borderBottomLeftRadius: 4 },

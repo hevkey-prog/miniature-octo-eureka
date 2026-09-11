@@ -55,7 +55,13 @@ export default function ChatListScreen({ navigation }: any) {
           <TouchableOpacity
             style={styles.chatRow}
             onPress={() =>
-              navigation.navigate("ChatRoom", { chatId: item.id, name: item.name, avatarColor: item.avatarColor, contactId: item.contactId })
+              navigation.navigate("ChatRoom", {
+                chatId: item.id,
+                name: item.name,
+                avatarColor: item.avatarColor,
+                contactId: item.contactId,
+                isAI: item.isAI,
+              })
             }
           >
             <View style={[styles.avatar, { backgroundColor: item.avatarColor }]}>
